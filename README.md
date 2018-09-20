@@ -11,11 +11,11 @@ test under CentOS7,at your own risk.
 yum install git golang yum-utils rpm-build gcc cmake3 -y  
 ln -sf /usr/bin/cmake3 /usr/bin/cmake  
 
-rm -rf ~/rpmbuild
+rm -rf ~/rpmbuild  
 mkdir -p ～/rpmbuild  
-cd ~/rpmbuild
+cd ~/rpmbuild  
 git clone https://github.com/purplegrape/tikv-rpm  
-cd SPEC
+cd SPEC  
 yum-builddep tikv.spec  
 rpmbuild -bs tikv.spec  
 rpmbuild -ba tikv.spec  
