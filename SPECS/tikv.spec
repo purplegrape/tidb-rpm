@@ -1,5 +1,5 @@
-#%global debug_package %{nil}
-#%global __os_install_post /usr/lib/rpm/brp-compress %{nil}
+%global debug_package %{nil}
+%global __os_install_post /usr/lib/rpm/brp-compress %{nil}
 
 %define RUST_VERSION nightly-2018-04-06
 
@@ -14,9 +14,9 @@ URL:            https://github.com/pingcap/tikv
 Source0:        %{name}-%{version}.tar.gz
 Source1:        rustup-init
 
-Source10:	tikv.conf
-Source11:	tikv-importer.conf
-Source12:	tikv-server.service
+Source10:	      tikv.conf
+Source11:	      tikv-importer.conf
+Source12:	      tikv-server.service
 
 BuildRequires:  autoconf
 BuildRequires:  automake
@@ -62,9 +62,9 @@ rm -rf $RPM_BUILD_ROOT
 %{__mkdir} -p $RPM_BUILD_ROOT%{_sharedstatedir}/tikv
 %{__mkdir} -p $RPM_BUILD_ROOT%{_localstatedir}/log/tikv
 
-%{__install} -m 755 target/release/tikv-ctl $RPM_BUILD_ROOT%{_bindir}
-%{__install} -m 755 target/release/tikv-importer $RPM_BUILD_ROOT%{_bindir}
-%{__install} -m 755 target/release/tikv-server $RPM_BUILD_ROOT%{_bindir}
+%{__install} -D -m 755 target/release/tikv-ctl $RPM_BUILD_ROOT%{_bindir}/tikv-ctl
+%{__install} -D -m 755 target/release/tikv-importer $RPM_BUILD_ROOT%{_bindir}/tikv-importer
+%{__install} -D -m 755 target/release/tikv-server $RPM_BUILD_ROOT%{_bindir}/tikv-server
 
 %{__install} -D -m 644 %{SOURCE10} $RPM_BUILD_ROOT%{_sysconfdir}/tikv/tikv.conf
 %{__install} -D -m 644 %{SOURCE11} $RPM_BUILD_ROOT%{_sysconfdir}/tikv/tikv-importer.conf
@@ -101,3 +101,4 @@ exit 0
 %dir %attr(0755,tikv,tikv) %{_localstatedir}/log/tikv
 
 %changelog
+
