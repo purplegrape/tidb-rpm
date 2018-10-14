@@ -101,4 +101,5 @@ exit 0
 %dir %attr(0755,tikv,tikv) %{_localstatedir}/log/tikv
 
 %changelog
-
+* Wed Sep 12 2018 Purple Grape <purplegrape4@gmail.com>
+- update to 2.0.7
