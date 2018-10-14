@@ -1,0 +1,16 @@
+[Unit]
+Description=TiDB is a distributed NewSQL database compatible with MySQL protocol
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=tidb
+Group=tidb
+ExecStart=/usr/bin/tidb-server -config /etc/tidb/tidb.conf
+ExecReload=/bin/kill -HUP $MAINPID
+KillSignal=SIGINT
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target
+
