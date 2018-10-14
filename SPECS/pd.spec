@@ -44,7 +44,10 @@ cd ../%{import_path}
 %{__mkdir} -p $RPM_BUILD_ROOT%{_sysconfdir}/pd
 %{__mkdir} -p $RPM_BUILD_ROOT%{_unitdir}
 
-%{__install} -p -m 755 bin/*  $RPM_BUILD_ROOT%{_bindir}
+%{__install} -p -m 755 bin/pd-ctl       $RPM_BUILD_ROOT%{_bindir}/pd-ctl
+%{__install} -p -m 755 bin/pd-recover   $RPM_BUILD_ROOT%{_bindir}/pd-recover
+%{__install} -p -m 755 bin/pd-server    $RPM_BUILD_ROOT%{_bindir}/pd-server
+%{__install} -p -m 755 bin/pd-tso-bench $RPM_BUILD_ROOT%{_bindir}/pd-tso-bench
 
 %{__install} -m 644 %{SOURCE1} $RPM_BUILD_ROOT%{_unitdir}/pd-server.service
 %{__install} -m 644 %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/pd/pd.conf
@@ -69,7 +72,10 @@ exit 0
 %systemd_postun_with_restart pd-server.service
 
 %files
-%{_bindir}/*
+%{_bindir}/pd-ctl
+%{_bindir}/pd-recover
+%{_bindir}/pd-server
+%{_bindir}/pd-tso-bench
 %{_unitdir}/pd-server.service
 %config(noreplace) %{_sysconfdir}/pd/pd.conf
 %dir %attr(755, tidb, tidb) /var/lib/pd
