@@ -1,11 +1,16 @@
 ## tidb-rpm
 rpms for tidb  
 
+## versions
+tidb 2.0.7  
+pd 2.0.5  
+tikv 2.0.7  
+
 ### 项目目的  
 将 tidb 编译过程工程化，可随时重现，包括tidb，pd 和 tikv
 
 ### 注意事项  
-tikv 编译过程会耗费相当多 CPU 和内存，CPU 至少4核，内存至少16G  
+tikv 编译过程会耗费相当多的 CPU 和内存，CPU 至少4核，内存至少16G  
 tikv 第一次编译过程会下载很多 cargo 包，耗时不少，默认生成在 $HOME/.cargo，第二次编译时可以重用。  
 tikv 是 rust 编写，对二进制文件进行 strip，会大大瘦身，属正常现象。
 tidb 和 pd 属于golang，默认没有做strip处理
