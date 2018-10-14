@@ -39,16 +39,11 @@ rm -rf $RPM_BUILD_ROOT
 %{__mkdir} -p $RPM_BUILD_ROOT/var/log/tidb
 
 cd ../%{import_path}
+%{__install} -D -m 755 bin/goyacc  $RPM_BUILD_ROOT%{_bindir}/goyacc
+%{__install} -D -m 755 bin/tidb-server  $RPM_BUILD_ROOT%{_bindir}/tidb-server
 
-%{__mkdir} -p $RPM_BUILD_ROOT%{_bindir}
-%{__mkdir} -p $RPM_BUILD_ROOT%{_sysconfdir}/tidb
-%{__mkdir} -p $RPM_BUILD_ROOT%{_unitdir}
-
-%{__install} -p -m 755 bin/goyacc  $RPM_BUILD_ROOT%{_bindir}
-%{__install} -p -m 755 bin/tidb-server  $RPM_BUILD_ROOT%{_bindir}
-
-%{__install} -m 644 %{SOURCE1} $RPM_BUILD_ROOT%{_unitdir}/tidb-server.service
-%{__install} -m 644 %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/tidb/tidb.conf
+%{__install} -D -m 644 %{SOURCE1} $RPM_BUILD_ROOT%{_unitdir}/tidb-server.service
+%{__install} -D -m 644 %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/tidb/tidb.conf
 
 %clean
 rm -rf $RPM_BUILD_ROOT
