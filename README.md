@@ -13,7 +13,7 @@ tikv 2.0.7
 tikv 编译过程会耗费相当多的 CPU 和内存，CPU 至少4核，内存至少16G  
 tikv 第一次编译过程会下载很多 cargo 包，耗时不少，默认生成在 $HOME/.cargo，第二次编译时可以重用。  
 tikv 是 rust 编写，对二进制文件进行 strip，会大大瘦身，属正常现象。
-tidb 和 pd 属于golang，默认没有做strip处理
+tidb 和 pd 属于golang，一般不做strip处理
 
 ### 环境准备  
 yum install git golang yum-utils rpm-build gcc cmake3 wget -y  
