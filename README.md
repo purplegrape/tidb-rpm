@@ -25,13 +25,13 @@ mv tidb-rpm rpmbuild
 ### HOWTO  
 
 #### 编译tidb  
-cd ~/rpmbuild/SPECS 
+cd ~/rpmbuild/SPECS  
 yum-builddep tidb.spec  
 rpmbuild -ba tidb.spec  
 
 #### 编译pd  
-cd ~/rpmbuild/SPECS 
-yum-builddep pd.spec  
+cd ~/rpmbuild/SPECS  
+yum-builddep pd.spec   
 rpmbuild -ba pd.spec  
 
 #### 编译tikv  
