@@ -18,6 +18,18 @@ tidb 和 pd 属于golang，一般不做strip处理
 ### 环境准备  
 yum install git golang yum-utils rpm-build gcc libstdc++-static cmake3 wget -y  
 ln -sf /usr/bin/cmake3 /usr/bin/cmake  
+
+（之后步骤都无需root特权）  
+
+mkdir $HOME/.cargo  
+cat > $HOME/.cargo/config <<EOF  
+[source.crates-io]  
+replace-with = 'ustc'  
+
+[source.ustc]  
+registry = "https://mirrors.ustc.edu.cn/crates.io-index"  
+EOF  
+
 cd ~  
 rm -rf rpmbuild  
 git clone https://github.com/purplegrape/tidb-rpm  rpmbuild
