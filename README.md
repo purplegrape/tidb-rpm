@@ -16,7 +16,7 @@ tikv 是 rust 编写，对二进制文件进行 strip，会大大瘦身，属正
 tidb 和 pd 属于golang，一般不做strip处理
 
 ### 环境准备  
-yum install git golang yum-utils rpm-build gcc cmake3 wget -y  
+yum install git golang yum-utils rpm-build gcc libstdc++-static cmake3 wget -y  
 ln -sf /usr/bin/cmake3 /usr/bin/cmake  
 cd ~  
 rm -rf rpmbuild  
