@@ -49,15 +49,6 @@ echo -e "cp -af /usr/bin/cmake3 /usr/bin/cmake"
 %{__install} -D -m 755  %{SOURCE1} %{_builddir}/%{buildsubdir}
 #/bin/bash rustup-init.sh --default-toolchain %{RUST_VERSION} -y
 ./rustup-init --default-toolchain %{RUST_VERSION} -y
-
-cat > $HOME/.cargo/config <<EOF
-[source.crates-io]
-replace-with = 'ustc'
-
-[source.ustc]
-registry = "https://mirrors.ustc.edu.cn/crates.io-index"
-EOF
-
 source $HOME/.cargo/env
 rustup override set %{RUST_VERSION}
 rustup component add rustfmt-preview --toolchain %{RUST_VERSION}
