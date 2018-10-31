@@ -19,7 +19,7 @@ tidb 和 pd 属于golang，一般不做strip处理
 yum install git golang yum-utils rpm-build gcc cmake3 wget -y  
 ln -sf /usr/bin/cmake3 /usr/bin/cmake  
 cd ~  
-rm -rf rpmbuild
+rm -rf rpmbuild  
 git clone https://github.com/purplegrape/tidb-rpm  rpmbuild
 
 
