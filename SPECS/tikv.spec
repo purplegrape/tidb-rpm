@@ -13,7 +13,7 @@ Source0:        %{name}-%{version}.tar.gz
 Source1:        rustup-init
 
 Source10:       tikv.conf
-Source11:	      tikv-importer.conf
+Source11:       tikv-importer.conf
 Source12:       tikv-server.service
 
 BuildRequires:  autoconf
