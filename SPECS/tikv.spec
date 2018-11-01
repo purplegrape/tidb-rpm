@@ -2,14 +2,14 @@
 %global __os_install_post /usr/lib/rpm/brp-compress %{nil}
 
 Name:           tikv
-Version:        2.0.7
+Version:        %{_VERSION}
 Release:        1%{?dist}
 Summary:        Distributed transactional key value database powered by Rust and Raft
 
 License:        apache 2.0
 URL:            https://github.com/pingcap/tikv
 
-Source0:        %{name}-%{version}.tar.gz
+Source0:        https://github.com/tikv/tikv/archive/v%{version}.tar.gz
 Source1:        rustup-init
 
 Source10:       tikv.conf
@@ -44,7 +44,7 @@ echo -e "cp -af /usr/bin/cmake3 /usr/bin/cmake"
 %setup -q
 
 %build
-export RUST_VERSION=%{cat rust-toolchain}
+export RUST_VERSION=%{__cat rust-toolchain}
 %{__install} -D -m 755  %{SOURCE1} %{_builddir}/%{buildsubdir}
 #/bin/bash rustup-init.sh --default-toolchain %{RUST_VERSION} -y
 ./rustup-init --default-toolchain %{RUST_VERSION} -y
