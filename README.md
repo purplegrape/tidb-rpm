@@ -52,6 +52,6 @@ cd ~/rpmbuild/SOURCES
 yum localinstall rocksdb-5.7.3-1.el7.centos.x86_64.rpm rocksdb-devel-5.7.3-1.el7.centos.x86_64.rpm -y  
 cd ~/rpmbuild/SPECS  
 yum-builddep tikv.spec  
-rpmbuild -bs tikv.spec  
-rpmbuild -ba tikv.spec  
+rpmbuild -bs tikv.spec --define '_VERSION 2.0.7'  
+rpmbuild -ba tikv.spec --define '_VERSION 2.0.7'  
 
