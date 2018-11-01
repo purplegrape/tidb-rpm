@@ -1,8 +1,6 @@
 %global debug_package %{nil}
 %global __os_install_post /usr/lib/rpm/brp-compress %{nil}
 
-%define RUST_VERSION nightly-2018-04-06
-
 Name:           tikv
 Version:        2.0.7
 Release:        1%{?dist}
@@ -46,6 +44,7 @@ echo -e "cp -af /usr/bin/cmake3 /usr/bin/cmake"
 %setup -q
 
 %build
+export RUST_VERSION=%{cat rust-toolchain}
 %{__install} -D -m 755  %{SOURCE1} %{_builddir}/%{buildsubdir}
 #/bin/bash rustup-init.sh --default-toolchain %{RUST_VERSION} -y
 ./rustup-init --default-toolchain %{RUST_VERSION} -y
