@@ -10,7 +10,7 @@ License:        apache 2.0
 URL:            https://github.com/pingcap/tikv
 
 Source0:        https://github.com/tikv/tikv/archive/v%{version}.tar.gz
-Source1:        rustup-init
+Source1:        https://static.rust-lang.org/rustup/dist/x86_64-unknown-linux-gnu/rustup-init
 
 Source10:       tikv.conf
 Source11:       tikv-importer.conf
