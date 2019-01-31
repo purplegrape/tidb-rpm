@@ -2,9 +2,9 @@
 rpms for tidb  
 
 ## versions
-tidb 2.0.7  
-pd 2.0.5  
-tikv 2.0.7  
+tidb 2.0.11  
+pd 2.0.11  
+tikv 2.0.11  
 
 ### 项目目的  
 将 tidb 编译过程工程化，可随时重现，包括tidb，pd 和 tikv
@@ -56,10 +56,10 @@ rpmbuild -ba pd.spec
 #### 编译tikv  
 ```
 cd ~/rpmbuild/SOURCES  
-yum localinstall rocksdb-5.7.3-1.el7.centos.x86_64.rpm rocksdb-devel-5.7.3-1.el7.centos.x86_64.rpm -y  
+yum localinstall rustup-1.15.0-1.el7.x86_64.rpm -y  
 cd ~/rpmbuild/SPECS  
 yum-builddep tikv.spec  
-rpmbuild -bs tikv.spec --define '_VERSION 2.0.7'  
-rpmbuild -ba tikv.spec --define '_VERSION 2.0.7'  
+rpmbuild -bs tikv.spec   
+rpmbuild -ba tikv.spec   
 ```
 
