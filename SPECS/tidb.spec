@@ -1,10 +1,10 @@
 %global _dwz_low_mem_die_limit 0
 %global debug_package %{nil}
 
-%global import_path     src/github.com/pingcap/tidb
+%define provider src/github.com/pingcap
 
 Name:           tidb
-Version:        2.0.7
+Version:        2.0.11
 Release:        1%{?dist}
 Summary:        TiDB is a distributed NewSQL database compatible with MySQL protocol
 
@@ -15,7 +15,6 @@ Source1:        tidb-server.service
 Source2:        tidb.conf
 
 BuildRequires:  git
-BuildRequires:  rsync
 BuildRequires:  golang
 Requires:       glibc
 Requires:       systemd
@@ -24,13 +23,13 @@ Requires:       systemd
 TiDB is a distributed NewSQL database compatible with MySQL protocol
 
 %prep
-mkdir -p %{import_path}
 %setup -q
-rsync -aq --delete ./ ../%{import_path}/
 
 %build
-export GOPATH=%{_builddir}
-cd ../%{import_path}
+mkdir -p _output/%{provider}
+export GOPATH=%{_builddir}/%{buildsubdir}/_output
+ln -sf %{_builddir}/%{buildsubdir}  _output/%{provider}/%{name}
+cd _output/%{provider}/%{name}
 make
 
 %install
@@ -38,16 +37,14 @@ rm -rf $RPM_BUILD_ROOT
 %{__mkdir} -p $RPM_BUILD_ROOT/var/lib/tidb
 %{__mkdir} -p $RPM_BUILD_ROOT/var/log/tidb
 
-cd ../%{import_path}
-%{__install} -D -m 755 bin/goyacc  $RPM_BUILD_ROOT%{_bindir}/goyacc
-%{__install} -D -m 755 bin/tidb-server  $RPM_BUILD_ROOT%{_bindir}/tidb-server
+%{__install} -D -p -m 755 bin/goyacc  $RPM_BUILD_ROOT%{_bindir}/goyacc
+%{__install} -D -p -m 755 bin/tidb-server  $RPM_BUILD_ROOT%{_bindir}/tidb-server
 
 %{__install} -D -m 644 %{SOURCE1} $RPM_BUILD_ROOT%{_unitdir}/tidb-server.service
 %{__install} -D -m 644 %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/tidb/tidb.conf
 
 %clean
 rm -rf $RPM_BUILD_ROOT
-rm -rf %{_builddir}/%{import_path}
 
 %pre
 # Add the "tidb" user

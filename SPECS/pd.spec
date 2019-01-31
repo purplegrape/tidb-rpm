@@ -1,10 +1,10 @@
 %global _dwz_low_mem_die_limit 0
 %global debug_package %{nil}
 
-%global import_path     src/github.com/pingcap/pd
+%global provider    src/github.com/pingcap
 
 Name:           pd
-Version:        2.0.5
+Version:        2.0.11
 Release:        1%{?dist}
 Summary:        Placement driver for TiKV
 
@@ -14,8 +14,6 @@ Source0:        %{name}-%{version}.tar.gz
 Source1:        pd-server.service
 Source2:        pd.conf
 
-BuildRequires:  git
-BuildRequires:  rsync
 BuildRequires:  golang
 Requires:       glibc
 Requires:       systemd
@@ -24,13 +22,13 @@ Requires:       systemd
 Placement driver for TiKV
 
 %prep
-mkdir -p %{import_path}
 %setup -q
-rsync -aq --delete ./ ../%{import_path}/
 
 %build
-export GOPATH=%{_builddir}
-cd ../%{import_path}
+mkdir -p _output/%{provider}
+export GOPATH=%{_builddir}/%{buildsubdir}/_output
+ln -sf %{_builddir}/%{buildsubdir} _output/%{provider}/%{name}
+cd _output/%{provider}/%{name}
 make
 
 %install
@@ -38,23 +36,17 @@ rm -rf $RPM_BUILD_ROOT
 %{__mkdir} -p $RPM_BUILD_ROOT/var/lib/pd
 %{__mkdir} -p $RPM_BUILD_ROOT/var/log/pd
 
-cd ../%{import_path}
-
 %{__mkdir} -p $RPM_BUILD_ROOT%{_bindir}
 %{__mkdir} -p $RPM_BUILD_ROOT%{_sysconfdir}/pd
 %{__mkdir} -p $RPM_BUILD_ROOT%{_unitdir}
 
-%{__install} -p -m 755 bin/pd-ctl       $RPM_BUILD_ROOT%{_bindir}/pd-ctl
-%{__install} -p -m 755 bin/pd-recover   $RPM_BUILD_ROOT%{_bindir}/pd-recover
-%{__install} -p -m 755 bin/pd-server    $RPM_BUILD_ROOT%{_bindir}/pd-server
-%{__install} -p -m 755 bin/pd-tso-bench $RPM_BUILD_ROOT%{_bindir}/pd-tso-bench
+%{__install} -p -m 755 bin/*  $RPM_BUILD_ROOT%{_bindir}
 
-%{__install} -m 644 %{SOURCE1} $RPM_BUILD_ROOT%{_unitdir}/pd-server.service
-%{__install} -m 644 %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/pd/pd.conf
+%{__install} -D -m 644 %{SOURCE1} $RPM_BUILD_ROOT%{_unitdir}/pd-server.service
+%{__install} -D -m 644 %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/pd/pd.conf
 
 %clean
 rm -rf $RPM_BUILD_ROOT
-rm -rf %{_builddir}/%{import_path}
 
 %pre
 # Add the "tidb" user
@@ -72,14 +64,11 @@ exit 0
 %systemd_postun_with_restart pd-server.service
 
 %files
-%{_bindir}/pd-ctl
-%{_bindir}/pd-recover
-%{_bindir}/pd-server
-%{_bindir}/pd-tso-bench
+%{_bindir}/*
 %{_unitdir}/pd-server.service
 %config(noreplace) %{_sysconfdir}/pd/pd.conf
-%dir %attr(755, tidb, tidb) /var/lib/pd
-%dir %attr(755, tidb, tidb) /var/log/pd
+%dir %attr(0755, tidb, tidb) /var/lib/pd
+%dir %attr(0755, tidb, tidb) /var/log/pd
 %doc README.md
 %license LICENSE
 

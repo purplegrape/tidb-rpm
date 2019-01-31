@@ -1,16 +1,17 @@
 %global debug_package %{nil}
 %global __os_install_post /usr/lib/rpm/brp-compress %{nil}
 
+%define RUST_VERSION nightly-2018-04-06
+
 Name:           tikv
-Version:        %{_VERSION}
+Version:        2.0.11
 Release:        1%{?dist}
 Summary:        Distributed transactional key value database powered by Rust and Raft
 
 License:        apache 2.0
 URL:            https://github.com/pingcap/tikv
 
-Source0:        https://github.com/tikv/tikv/archive/v%{version}.tar.gz
-Source1:        https://static.rust-lang.org/rustup/dist/x86_64-unknown-linux-gnu/rustup-init
+Source0:        %{name}-%{version}.tar.gz
 
 Source10:       tikv.conf
 Source11:       tikv-importer.conf
@@ -19,8 +20,8 @@ Source12:       tikv-server.service
 BuildRequires:  autoconf
 BuildRequires:  automake
 BuildRequires:  libtool
-BuildRequires:  rocksdb-devel >= 5.7.3
 BuildRequires:  openssl-devel
+BuildRequires:  /usr/bin/rustup-init
 
 BuildRequires:  make
 BuildRequires:  cmake3
@@ -38,21 +39,19 @@ Requires:       systemd
 Distributed transactional key value database powered by Rust and Raft
 
 %prep
-echo -e "You probably need run the following command as root after install cmake3"
-echo -e "cp -af /usr/bin/cmake3 /usr/bin/cmake"
+if [ -f /usr/bin/cmake3 ];then
+	install -D -m 755 /usr/bin/cmake3 $HOME/.cargo/bin/cmake
+fi
 
 %setup -q
 
 %build
-export RUST_VERSION=%{__cat rust-toolchain}
-%{__install} -D -m 755  %{SOURCE1} %{_builddir}/%{buildsubdir}
-#/bin/bash rustup-init.sh --default-toolchain %{RUST_VERSION} -y
-./rustup-init --default-toolchain %{RUST_VERSION} -y
+#export RUST_VERSION=%{__cat rust-toolchain}
+/usr/bin/rustup-init --default-toolchain %{RUST_VERSION} -y
 source $HOME/.cargo/env
 rustup override set %{RUST_VERSION}
 rustup component add rustfmt-preview --toolchain %{RUST_VERSION}
 
-#make release
 cargo build --release --features "portable sse no-fail" --verbose
 
 %install
@@ -72,13 +71,13 @@ rm -rf $RPM_BUILD_ROOT
 
 %clean
 rm -rf $RPM_BUILD_ROOT
-#make clean
+make clean
 #rm -rf $HOME/.cargo
 #rm -rf $HOME/.rustup
 #sed -i '/cargo/d' $HOME/.bash_profile
 
 %check
-#make test
+make test
 
 %pre
 # Add the "tikv" user
@@ -100,5 +99,5 @@ exit 0
 %dir %attr(0755,tikv,tikv) %{_localstatedir}/log/tikv
 
 %changelog
-* Wed Sep 12 2018 Purple Grape <purplegrape4@gmail.com>
-- update to 2.0.7
+* Thu Jan 31 2019 Purple Grape <purplegrape4@gmail.com>
+- update to 2.0.11
