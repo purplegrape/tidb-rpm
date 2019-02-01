@@ -86,7 +86,7 @@ make test
 %pre
 # Add the "tikv" user
 getent group  tikv >/dev/null || groupadd -r tikv
-getent passwd tikv >/dev/null || useradd -r -g tikv -s /sbin/nologin -d /var/lib/tikv  tidkv
+getent passwd tikv >/dev/null || useradd -r -g tikv -s /sbin/nologin -d /var/lib/tikv  tikv
 exit 0
 
 %post
