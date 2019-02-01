@@ -6,11 +6,10 @@ Wants=network-online.target
 [Service]
 User=tikv
 Group=tikv
-ExecStart=/usr/bin/tikv-server --config /etc/tikv/tikv.conf
+ExecStart=/usr/bin/tikv-server --config /etc/tikv/tikv.toml
 ExecReload=/bin/kill -HUP $MAINPID
 KillSignal=SIGINT
 LimitNOFILE=82920
 
 [Install]
 WantedBy=multi-user.target
-

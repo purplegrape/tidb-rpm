@@ -12,7 +12,6 @@ License:        QL and STRUTIL
 URL:            https://github.com/pingcap/pd
 Source0:        %{name}-%{version}.tar.gz
 Source1:        pd-server.service
-Source2:        pd.conf
 
 BuildRequires:  golang
 Requires:       glibc
@@ -43,14 +42,15 @@ rm -rf $RPM_BUILD_ROOT
 %{__install} -p -m 755 bin/*  $RPM_BUILD_ROOT%{_bindir}
 
 %{__install} -D -m 644 %{SOURCE1} $RPM_BUILD_ROOT%{_unitdir}/pd-server.service
-%{__install} -D -m 644 %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/pd/pd.conf
+
+%{__install} -D -m 644 conf/config.toml $RPM_BUILD_ROOT%{_sysconfdir}/pd/pd.toml
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %pre
 # Add the "tidb" user
-getent group tidb  >/dev/null || groupadd -r tidb
+getent group  tidb >/dev/null || groupadd -r tidb
 getent passwd tidb >/dev/null || useradd -r -g tidb -s /sbin/nologin -d /var/lib/tidb tidb
 exit 0
 
@@ -66,13 +66,16 @@ exit 0
 %files
 %{_bindir}/*
 %{_unitdir}/pd-server.service
-%config(noreplace) %{_sysconfdir}/pd/pd.conf
+%config(noreplace) %{_sysconfdir}/pd/pd.toml
 %dir %attr(0755, tidb, tidb) /var/lib/pd
 %dir %attr(0755, tidb, tidb) /var/log/pd
 %doc README.md
 %license LICENSE
 
 %changelog
+* Fri Feb 1 2019 Purple Grape <purplegrape4@gmail.com>
+- update to 2.0.11
+
 * Wed Sep 12 2018 Purple Grape <purplegrape4@gmail.com>
 - update to 2.0.5
 

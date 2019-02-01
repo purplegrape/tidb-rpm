@@ -12,7 +12,6 @@ License:        QL and STRUTIL
 URL:            https://github.com/pingcap/tidb
 Source0:        %{name}-%{version}.tar.gz
 Source1:        tidb-server.service
-Source2:        tidb.conf
 
 BuildRequires:  git
 BuildRequires:  golang
@@ -40,8 +39,10 @@ rm -rf $RPM_BUILD_ROOT
 %{__install} -D -p -m 755 bin/goyacc  $RPM_BUILD_ROOT%{_bindir}/goyacc
 %{__install} -D -p -m 755 bin/tidb-server  $RPM_BUILD_ROOT%{_bindir}/tidb-server
 
+%{__install} -D -m 644 config/config.toml.example $RPM_BUILD_ROOT%{_sysconfdir}/tidb/tidb.toml
+sed -i 's/tmp/var\/lib/g'  $RPM_BUILD_ROOT%{_sysconfdir}/tidb/tidb.toml
+
 %{__install} -D -m 644 %{SOURCE1} $RPM_BUILD_ROOT%{_unitdir}/tidb-server.service
-%{__install} -D -m 644 %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/tidb/tidb.conf
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -65,13 +66,16 @@ exit 0
 %{_bindir}/goyacc
 %{_bindir}/tidb-server
 %{_unitdir}/tidb-server.service
-%config(noreplace) %{_sysconfdir}/tidb/tidb.conf
+%config(noreplace) %{_sysconfdir}/tidb/tidb.toml
 %dir %attr(755, tidb, tidb) /var/lib/tidb
 %dir %attr(755, tidb, tidb) /var/log/tidb
 %doc README.md
 %license LICENSE
 
 %changelog
+* Fri Feb 1 2019 Purple Grape <purplegrape4@gmail.com>
+- update to 2.0.11
+
 * Wed Sep 12 2018 Purple Grape <purplegrape4@gmail.com>
 - update to 2.0.7
 

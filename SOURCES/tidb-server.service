@@ -6,11 +6,10 @@ Wants=network-online.target
 [Service]
 User=tidb
 Group=tidb
-ExecStart=/usr/bin/tidb-server -config /etc/tidb/tidb.conf
+ExecStart=/usr/bin/tidb-server -config /etc/tidb/tidb.toml
 ExecReload=/bin/kill -HUP $MAINPID
 KillSignal=SIGINT
 LimitNOFILE=65536
 
 [Install]
 WantedBy=multi-user.target
-
