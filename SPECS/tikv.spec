@@ -1,3 +1,6 @@
+%global debug_package %{nil}
+%global __os_install_post /usr/lib/rpm/brp-compress %{nil}
+
 Name:           tikv
 Version:        2.0.11
 Release:        1%{?dist}
@@ -7,7 +10,8 @@ License:        apache 2.0
 URL:            https://github.com/pingcap/tikv
 
 Source0:        %{name}-%{version}.tar.gz
-Source10:       tikv-server.service
+Source1:        tikv-server.service
+Source2:        tikv-server.sysconfig
 
 BuildRequires:  autoconf
 BuildRequires:  automake
@@ -23,7 +27,6 @@ BuildRequires:  libstdc++-static
 BuildRequires:  git
 BuildRequires:  systemd
 
-Requires:       glibc
 Requires:       systemd
 
 %description
@@ -40,7 +43,7 @@ fi
 %setup -q
 
 %build
-RUST_VERSION=$(cat rust-toolchain)
+export RUST_VERSION=$(cat rust-toolchain)
 /usr/bin/rustup-init --default-toolchain ${RUST_VERSION} -y
 
 source $HOME/.cargo/env
@@ -55,8 +58,8 @@ EOF
 rustup override set ${RUST_VERSION}
 rustup component add rustfmt-preview --toolchain ${RUST_VERSION}
 
-#make release
-cargo build --release --features "portable sse no-fail" --verbose
+cargo build --release --verbose
+#cargo build --release --verbose --features "portable sse no-fail"
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -68,12 +71,12 @@ rm -rf $RPM_BUILD_ROOT
 %{__install} -D -m 755 target/release/tikv-importer $RPM_BUILD_ROOT%{_bindir}/tikv-importer
 %{__install} -D -m 755 target/release/tikv-server $RPM_BUILD_ROOT%{_bindir}/tikv-server
 
-%{__install} -D -m 644 %{SOURCE10} $RPM_BUILD_ROOT%{_unitdir}/tikv-server.service
+%{__install} -D -m 644 %{SOURCE1} $RPM_BUILD_ROOT%{_unitdir}/tikv-server.service
+%{__install} -D -m 644 %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig/tikv-server
 
-%{__install} -D -m 644 etc/config-template.toml $RPM_BUILD_ROOT%{_sysconfdir}/tikv/tikv.toml
+%{__install} -D -m 644 etc/config-template.toml $RPM_BUILD_ROOT%{_sysconfdir}/tikv/tikv-server.toml
 %{__install} -D -m 644 etc/tikv-importer.toml $RPM_BUILD_ROOT%{_sysconfdir}/tikv/tikv-importer.toml
-
-sed -i 's/tmp/var\/lib/g' $RPM_BUILD_ROOT%{_sysconfdir}/tikv/*.toml
+sed -i 's/tmp/var\/lib/g'  $RPM_BUILD_ROOT%{_sysconfdir}/tikv/*.toml
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -86,7 +89,7 @@ make test
 %pre
 # Add the "tikv" user
 getent group  tikv >/dev/null || groupadd -r tikv
-getent passwd tikv >/dev/null || useradd -r -g tikv -s /sbin/nologin -d /var/lib/tikv  tikv
+getent passwd tikv >/dev/null || useradd -r -g tikv -s /sbin/nologin -d /var/lib/tikv tikv
 exit 0
 
 %post
@@ -98,9 +101,10 @@ exit 0
 %files
 %{_bindir}/*
 %config(noreplace) %{_sysconfdir}/tikv/*
+%config(noreplace) %{_sysconfdir}/sysconfig/tikv-server
 %{_unitdir}/tikv-server.service
-%dir %attr(0755,tikv,tikv) %{_sharedstatedir}/tikv
-%dir %attr(0755,tikv,tikv) %{_localstatedir}/log/tikv
+%dir %attr(0755, tikv, tikv) %{_sharedstatedir}/tikv
+%dir %attr(0755, tikv, tikv) %{_localstatedir}/log/tikv
 
 %changelog
 * Thu Jan 31 2019 Purple Grape <purplegrape4@gmail.com>

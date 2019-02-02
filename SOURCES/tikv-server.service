@@ -6,8 +6,10 @@ Wants=network-online.target
 [Service]
 User=tikv
 Group=tikv
-ExecStart=/usr/bin/tikv-server --config /etc/tikv/tikv.toml
+EnvironmentFile=-/etc/sysconfig/tikv-server
+ExecStart=/usr/bin/tikv-server $OPTIONS
 ExecReload=/bin/kill -HUP $MAINPID
+Restart=on-failure
 KillSignal=SIGINT
 LimitNOFILE=82920
 

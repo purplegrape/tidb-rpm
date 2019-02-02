@@ -4,11 +4,13 @@ After=network-online.target
 Wants=network-online.target
 
 [Service]
-User=tidb
-Group=tidb
-ExecStart=/usr/bin/pd-server -config /etc/pd/pd.toml
+User=nobody
+Group=nobody
+EnvironmentFile=-/etc/sysconfig/pd-server
+ExecStart=/usr/bin/pd-server $OPTIONS
 ExecReload=/bin/kill -HUP $MAINPID
 KillSignal=SIGINT
+Restart=on-failure
 LimitNOFILE=65536
 
 [Install]

@@ -4,10 +4,12 @@ After=network-online.target
 Wants=network-online.target
 
 [Service]
-User=tidb
-Group=tidb
-ExecStart=/usr/bin/tidb-server -config /etc/tidb/tidb.toml
+User=mysql
+Group=mysql
+EnvironmentFile=-/etc/sysconfig/tidb-server
+ExecStart=/usr/bin/tidb-server $OPTIONS
 ExecReload=/bin/kill -HUP $MAINPID
+Restart=on-failure
 KillSignal=SIGINT
 LimitNOFILE=65536
 

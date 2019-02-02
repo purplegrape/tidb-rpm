@@ -12,6 +12,8 @@ License:        QL and STRUTIL
 URL:            https://github.com/pingcap/tidb
 Source0:        %{name}-%{version}.tar.gz
 Source1:        tidb-server.service
+Source2:        tidb-server.sysconfig
+Source3:        tidb-server.toml
 
 BuildRequires:  git
 BuildRequires:  golang
@@ -33,28 +35,31 @@ make
 
 %install
 rm -rf $RPM_BUILD_ROOT
-%{__mkdir} -p $RPM_BUILD_ROOT/var/lib/tidb
 %{__mkdir} -p $RPM_BUILD_ROOT/var/log/tidb
 
 %{__install} -D -p -m 755 bin/goyacc  $RPM_BUILD_ROOT%{_bindir}/goyacc
 %{__install} -D -p -m 755 bin/tidb-server  $RPM_BUILD_ROOT%{_bindir}/tidb-server
 
-%{__install} -D -m 644 config/config.toml.example $RPM_BUILD_ROOT%{_sysconfdir}/tidb/tidb.toml
-sed -i 's/tmp/var\/lib/g'  $RPM_BUILD_ROOT%{_sysconfdir}/tidb/tidb.toml
+%{__install} -D -m 644 config/config.toml.example $RPM_BUILD_ROOT%{_sysconfdir}/tidb/tidb-server.toml
+sed -i 's/tmp/var\/lib/g'  $RPM_BUILD_ROOT%{_sysconfdir}/tidb/tidb-server.toml
 
 %{__install} -D -m 644 %{SOURCE1} $RPM_BUILD_ROOT%{_unitdir}/tidb-server.service
+%{__install} -D -m 644 %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig/tidb-server
+%{__install} -D -m 644 %{SOURCE3} $RPM_BUILD_ROOT%{_sysconfdir}/tidb/tidb-server.toml
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %pre
-# Add the "tidb" user
-getent group tidb  >/dev/null || groupadd -r tidb
-getent passwd tidb >/dev/null || useradd -r -g tidb -s /sbin/nologin -d /var/lib/tidb tidb
+# Add the "mysql" user
+getent group  mysql >/dev/null || groupadd -r -g 27 mysql
+getent passwd mysql >/dev/null || useradd -r -u 27 -g 27 -s /sbin/nologin -d /var/lib/mysql mysql
 exit 0
 
 %post
 %systemd_post tidb-server.service
+/usr/bin/mkdir -p /var/lib/mysql
+/usr/bin/chown -R mysql:mysql /var/lib/mysql
 
 %preun
 %systemd_preun tidb-server.service
@@ -66,9 +71,9 @@ exit 0
 %{_bindir}/goyacc
 %{_bindir}/tidb-server
 %{_unitdir}/tidb-server.service
-%config(noreplace) %{_sysconfdir}/tidb/tidb.toml
-%dir %attr(755, tidb, tidb) /var/lib/tidb
-%dir %attr(755, tidb, tidb) /var/log/tidb
+%config(noreplace) %{_sysconfdir}/tidb/tidb-server.toml
+%config(noreplace) %{_sysconfdir}/sysconfig/tidb-server
+%dir %attr(0755, mysql, mysql) %{_localstatedir}/log/tidb
 %doc README.md
 %license LICENSE
 
