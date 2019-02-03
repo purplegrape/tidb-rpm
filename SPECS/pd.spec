@@ -4,7 +4,7 @@
 %global provider    src/github.com/pingcap
 
 Name:           pd
-Version:        2.0.11
+Version:        2.1.3
 Release:        1%{?dist}
 Summary:        Placement driver for TiKV
 
@@ -14,7 +14,7 @@ Source0:        %{name}-%{version}.tar.gz
 #Source1:        pd-server.service
 #Source2:        pd-server.sysconfig
 
-BuildRequires:  golang
+BuildRequires:  golang >= 1.10.0
 Requires:       glibc
 Requires:       systemd
 

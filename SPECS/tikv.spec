@@ -1,8 +1,10 @@
 %global debug_package %{nil}
 %global __os_install_post /usr/lib/rpm/brp-compress %{nil}
 
+%define RUST_VERSION $(cat rust-toolchain)
+
 Name:           tikv
-Version:        2.0.11
+Version:        2.1.3
 Release:        1%{?dist}
 Summary:        Distributed transactional key value database powered by Rust and Raft
 
@@ -41,8 +43,7 @@ fi
 %setup -q
 
 %build
-export RUST_VERSION=$(cat rust-toolchain)
-/usr/bin/rustup-init --default-toolchain ${RUST_VERSION} -y
+/usr/bin/rustup-init --default-toolchain %{RUST_VERSION} -y
 
 source $HOME/.cargo/env
 cat  > $HOME/.cargo/config <<EOF
@@ -53,11 +54,11 @@ replace-with = 'ustc'
 registry = "https://mirrors.ustc.edu.cn/crates.io-index"
 EOF
 
-rustup override set ${RUST_VERSION}
-rustup component add rustfmt-preview --toolchain ${RUST_VERSION}
+rustup override set %{RUST_VERSION}
+rustup component add rustfmt-preview --toolchain %{RUST_VERSION}
 
-cargo build --release --verbose
-#cargo build --release --verbose --features "portable sse no-fail"
+#cargo build --release --verbose
+cargo build --release --verbose --features "portable sse no-fail"
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -107,7 +108,7 @@ make clean
 #rustup self uninstall -y
 
 %check
-make test
+#make test
 
 %pre
 # Add the "mysql" user
