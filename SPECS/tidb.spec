@@ -86,7 +86,6 @@ exit 0
 %systemd_postun_with_restart tidb-server.service
 
 %files
-%{_bindir}/goyacc
 %{_bindir}/tidb-server
 %{_unitdir}/tidb-server.service
 %config(noreplace) %{_sysconfdir}/tidb/tidb-server.toml
