@@ -64,20 +64,21 @@ rpmbuild -ba tikv.spec
 ```
 
 #### 基本使用教程(all-in-one)
-'''
-rpm -ivh pd-2.0.11-1.el7.src.rpm  tidb-2.0.11-1.el7.src.rpm  tikv-2.0.11-1.el7.src.rpm
+```
+rpm -ivh pd-2.0.11-1.el7.x86_64.rpm  tidb-2.0.11-1.el7.x86_64.rpm  tikv-2.0.11-1.el7.x86_64.rpm
 systemctl enable pd-server tikv-server tidb-server
 systemctl start pd-server tikv-server tidb-server
-'''
+top -u mysql
+```
 
 ##### 在本地安装mysql客户端  
-'''
+```
 yum install mariadb -y
-'''
+```
 
 ##### 使用下面的命令连接到tidb, 默认密码为空  
-'''
+```
 mysql -h 127.0.0.1 -P 4000 -u root
-'''
+```
 
 
