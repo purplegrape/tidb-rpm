@@ -2,9 +2,9 @@
 rpms for tidb  
 
 ## versions
-tidb 2.0.11  
-pd 2.0.11  
-tikv 2.0.11  
+tidb 2.1.3  
+pd 2.1.3  
+tikv 2.1.3  
 
 ### 项目目的  
 将 tidb 编译过程工程化，可随时重现，包括tidb，pd 和 tikv
