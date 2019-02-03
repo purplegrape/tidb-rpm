@@ -11,10 +11,8 @@ tikv 2.0.11
 
 ### 注意事项  
 ```
-tikv 编译过程会耗费相当多的 CPU 和内存，CPU 至少4核，内存至少16G  
-tikv 第一次编译过程会下载很多 cargo 包，耗时不少，默认生成在 $HOME/.cargo，第二次编译时可以重用。  
-tikv 是 rust 编写，对二进制文件进行 strip，会大大瘦身，属正常现象。
-tidb 和 pd 属于golang，一般不做strip处理
+tikv 首次编译会下载很多 cargo 包，耗时不少，默认生成在 $HOME/.cargo，第二次编译时可以重用。  
+tikv 编译过程会耗费相当多的CPU 和内存，CPU 至少4核，内存至少16G，否则可能会导致编译失败  
 ```
 
 ### 环境准备  
@@ -55,7 +53,7 @@ rpmbuild -ba pd.spec
 ```
 #### 编译tikv  
 ```
-cd ~/rpmbuild/SOURCES  
+cd ~/rpmbuild/RPMS/x86_64  
 yum localinstall rustup-1.15.0-1.el7.x86_64.rpm -y  
 cd ~/rpmbuild/SPECS  
 yum-builddep tikv.spec  
