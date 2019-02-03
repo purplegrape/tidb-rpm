@@ -35,7 +35,6 @@ make
 rm -rf $RPM_BUILD_ROOT
 %{__mkdir} -p $RPM_BUILD_ROOT/var/log/tidb
 
-%{__install} -D -p -m 755 bin/goyacc  $RPM_BUILD_ROOT%{_bindir}/goyacc
 %{__install} -D -p -m 755 bin/tidb-server  $RPM_BUILD_ROOT%{_bindir}/tidb-server
 
 %{__mkdir} -p $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig
