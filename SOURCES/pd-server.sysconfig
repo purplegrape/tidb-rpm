@@ -1,1 +1,0 @@
-OPTIONS="-config /etc/pd/pd-server.toml -client-urls http://127.0.0.1:2379 --data-dir /var/lib/pd/default.pd --log-file /var/log/pd/pd-server.log"

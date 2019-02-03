@@ -10,8 +10,6 @@ License:        apache 2.0
 URL:            https://github.com/pingcap/tikv
 
 Source0:        %{name}-%{version}.tar.gz
-Source1:        tikv-server.service
-Source2:        tikv-server.sysconfig
 
 BuildRequires:  autoconf
 BuildRequires:  automake
@@ -67,16 +65,41 @@ rm -rf $RPM_BUILD_ROOT
 %{__mkdir} -p $RPM_BUILD_ROOT%{_sharedstatedir}/tikv
 %{__mkdir} -p $RPM_BUILD_ROOT%{_localstatedir}/log/tikv
 
+
 %{__install} -D -m 755 target/release/tikv-ctl $RPM_BUILD_ROOT%{_bindir}/tikv-ctl
 %{__install} -D -m 755 target/release/tikv-importer $RPM_BUILD_ROOT%{_bindir}/tikv-importer
 %{__install} -D -m 755 target/release/tikv-server $RPM_BUILD_ROOT%{_bindir}/tikv-server
 
-%{__install} -D -m 644 %{SOURCE1} $RPM_BUILD_ROOT%{_unitdir}/tikv-server.service
-%{__install} -D -m 644 %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig/tikv-server
-
 %{__install} -D -m 644 etc/config-template.toml $RPM_BUILD_ROOT%{_sysconfdir}/tikv/tikv-server.toml
 %{__install} -D -m 644 etc/tikv-importer.toml $RPM_BUILD_ROOT%{_sysconfdir}/tikv/tikv-importer.toml
 sed -i 's/tmp/var\/lib/g'  $RPM_BUILD_ROOT%{_sysconfdir}/tikv/*.toml
+
+%{__mkdir} -p $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig
+cat > $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig/tikv-server <<EOF
+OPTIONS="--config /etc/tikv/tikv-server.toml --addr 127.0.0.1:20160 --pd-endpoints http://127.0.0.1:2379 --data-dir /var/lib/tikv/store"
+EOF
+
+%{__mkdir} -p $RPM_BUILD_ROOT%{_unitdir}
+cat > $RPM_BUILD_ROOT%{_unitdir}/tikv-server.service <<EOF
+[Unit]
+Description=TiKV is a distributed transactional key value database powered by Rust and Raft
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=mysql
+Group=mysql
+EnvironmentFile=-/etc/sysconfig/tikv-server
+ExecStart=/usr/bin/tikv-server \$OPTIONS
+ExecReload=/bin/kill -HUP \$MAINPID
+Restart=on-failure
+KillSignal=SIGINT
+LimitNOFILE=82920
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -87,9 +110,9 @@ make clean
 make test
 
 %pre
-# Add the "tikv" user
-getent group  tikv >/dev/null || groupadd -r tikv
-getent passwd tikv >/dev/null || useradd -r -g tikv -s /sbin/nologin -d /var/lib/tikv tikv
+# Add the "mysql" user
+getent group  mysql >/dev/null || groupadd -r -g 27 mysql
+getent passwd mysql >/dev/null || useradd -r -u 27 -g 27 -s /sbin/nologin -d /var/lib/mysql mysql
 exit 0
 
 %post
@@ -100,11 +123,12 @@ exit 0
 
 %files
 %{_bindir}/*
-%config(noreplace) %{_sysconfdir}/tikv/*
+%config(noreplace) %{_sysconfdir}/tikv/*.toml
 %config(noreplace) %{_sysconfdir}/sysconfig/tikv-server
 %{_unitdir}/tikv-server.service
-%dir %attr(0755, tikv, tikv) %{_sharedstatedir}/tikv
-%dir %attr(0755, tikv, tikv) %{_localstatedir}/log/tikv
+%dir %{_sysconfdir}/tikv
+%dir %attr(0755, mysql, mysql) %{_sharedstatedir}/tikv
+%dir %attr(0755, mysql, mysql) %{_localstatedir}/log/tikv
 
 %changelog
 * Thu Jan 31 2019 Purple Grape <purplegrape4@gmail.com>

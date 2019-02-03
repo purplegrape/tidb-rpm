@@ -11,9 +11,7 @@ Summary:        TiDB is a distributed NewSQL database compatible with MySQL prot
 License:        QL and STRUTIL
 URL:            https://github.com/pingcap/tidb
 Source0:        %{name}-%{version}.tar.gz
-Source1:        tidb-server.service
-Source2:        tidb-server.sysconfig
-Source3:        tidb-server.toml
+Source1:        tidb-server.toml
 
 BuildRequires:  git
 BuildRequires:  golang
@@ -40,12 +38,33 @@ rm -rf $RPM_BUILD_ROOT
 %{__install} -D -p -m 755 bin/goyacc  $RPM_BUILD_ROOT%{_bindir}/goyacc
 %{__install} -D -p -m 755 bin/tidb-server  $RPM_BUILD_ROOT%{_bindir}/tidb-server
 
-%{__install} -D -m 644 config/config.toml.example $RPM_BUILD_ROOT%{_sysconfdir}/tidb/tidb-server.toml
-sed -i 's/tmp/var\/lib/g'  $RPM_BUILD_ROOT%{_sysconfdir}/tidb/tidb-server.toml
+%{__mkdir} -p $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig
+cat > $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig/tidb-server <<EOF
+OPTIONS="-config /etc/tidb/tidb-server.toml"
+EOF
 
-%{__install} -D -m 644 %{SOURCE1} $RPM_BUILD_ROOT%{_unitdir}/tidb-server.service
-%{__install} -D -m 644 %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig/tidb-server
-%{__install} -D -m 644 %{SOURCE3} $RPM_BUILD_ROOT%{_sysconfdir}/tidb/tidb-server.toml
+%{__mkdir} -p $RPM_BUILD_ROOT%{_unitdir}
+cat > $RPM_BUILD_ROOT%{_unitdir}/tidb-server.service <<EOF
+[Unit]
+Description=TiDB is a distributed NewSQL database compatible with MySQL protocol
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=mysql
+Group=mysql
+EnvironmentFile=-/etc/sysconfig/tidb-server
+ExecStart=/usr/bin/tidb-server \$OPTIONS
+ExecReload=/bin/kill -HUP \$MAINPID
+KillSignal=SIGINT
+Restart=on-failure
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+%{__install} -D -m 644 %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/tidb/tidb-server.toml
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -73,6 +92,7 @@ exit 0
 %{_unitdir}/tidb-server.service
 %config(noreplace) %{_sysconfdir}/tidb/tidb-server.toml
 %config(noreplace) %{_sysconfdir}/sysconfig/tidb-server
+%dir %{_sysconfdir}/tidb
 %dir %attr(0755, mysql, mysql) %{_localstatedir}/log/tidb
 %doc README.md
 %license LICENSE
