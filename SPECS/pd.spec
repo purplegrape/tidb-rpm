@@ -4,8 +4,8 @@
 %global provider    src/github.com/pingcap
 
 Name:           pd
-Version:        3.0.0
-Release:        2%{?dist}
+Version:        3.0.1
+Release:        1%{?dist}
 Summary:        Placement driver for TiKV
 
 License:        QL and STRUTIL

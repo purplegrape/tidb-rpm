@@ -4,8 +4,8 @@
 %define provider src/github.com/pingcap
 
 Name:           tidb
-Version:        3.0.0
-Release:        2%{?dist}
+Version:        3.0.1
+Release:        1%{?dist}
 Summary:        TiDB is a distributed NewSQL database compatible with MySQL protocol
 
 License:        QL and STRUTIL

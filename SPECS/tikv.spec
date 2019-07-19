@@ -2,8 +2,8 @@
 #%global __os_install_post /usr/lib/rpm/brp-compress %{nil}
 
 Name:           tikv
-Version:        3.0.0
-Release:        2%{?dist}
+Version:        3.0.1
+Release:        1%{?dist}
 Summary:        Distributed transactional key value database powered by Rust and Raft
 
 License:        ASL 2.0
@@ -62,7 +62,8 @@ rustup override set ${RUST_VERSION}
 rustup component add rustfmt-preview --toolchain ${RUST_VERSION}
 
 #cargo build --release --verbose
-cargo build --release --verbose --features "portable sse no-fail"
+cargo build --release --verbose --no-default-features --features "portable sse no-fail"
+#make build
 
 %install
 rm -rf $RPM_BUILD_ROOT
