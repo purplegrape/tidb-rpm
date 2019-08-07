@@ -1,5 +1,5 @@
 ## tidb-rpm
-rpms for tidb  
+el7 rpms for tidb   
 
 ## versions
 tidb 3.0.2  
