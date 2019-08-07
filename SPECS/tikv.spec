@@ -1,8 +1,9 @@
-#%global debug_package %{nil}
-#%global __os_install_post /usr/lib/rpm/brp-compress %{nil}
+%global debug_package %{nil}
+%global __os_install_post /usr/lib/rpm/brp-compress %{nil}
+%global __spec_install_post %{nil}
 
 Name:           tikv
-Version:        3.0.1
+Version:        3.0.2
 Release:        1%{?dist}
 Summary:        Distributed transactional key value database powered by Rust and Raft
 
@@ -26,7 +27,7 @@ BuildRequires:  libstdc++-static
 BuildRequires:  git
 BuildRequires:  perl
 BuildRequires:  systemd
-BuildConflicts: cmake
+#BuildConflicts: cmake
 
 Requires:       systemd
 Requires(pre):  shadow-utils
@@ -62,7 +63,7 @@ rustup override set ${RUST_VERSION}
 rustup component add rustfmt-preview --toolchain ${RUST_VERSION}
 
 #cargo build --release --verbose
-cargo build --release --verbose --no-default-features --features "portable sse no-fail"
+cargo build --release --verbose --no-default-features --features "jemalloc portable sse no-fail"
 #make build
 
 %install
@@ -75,6 +76,7 @@ rm -rf $RPM_BUILD_ROOT
 %{__install} -D -m 755 target/release/tikv-ctl $RPM_BUILD_ROOT%{_bindir}/tikv-ctl
 %{__install} -D -m 755 target/release/tikv-importer $RPM_BUILD_ROOT%{_bindir}/tikv-importer
 %{__install} -D -m 755 target/release/tikv-server $RPM_BUILD_ROOT%{_bindir}/tikv-server
+%{__strip} -p $RPM_BUILD_ROOT%{_bindir}/*
 
 %{__install} -D -m 644 etc/config-template.toml $RPM_BUILD_ROOT%{_sysconfdir}/tikv/tikv-server.toml
 %{__install} -D -m 644 etc/tikv-importer.toml $RPM_BUILD_ROOT%{_sysconfdir}/tikv/tikv-importer.toml
@@ -109,7 +111,7 @@ EOF
 
 %clean
 rm -rf $RPM_BUILD_ROOT
-make clean
+#make clean
 #rustup self uninstall -y
 
 %check
@@ -137,6 +139,9 @@ exit 0
 %dir %attr(0755, mysql, mysql) %{_localstatedir}/log/tikv
 
 %changelog
+* Wed Aug 7 2019 Purple Grape <purplegrape4@gmail.com>
+- update to 3.0.2
+
 * Fri Jul 5 2019 Purple Grape <purplegrape4@gmail.com>
 - update to 3.0.0
 

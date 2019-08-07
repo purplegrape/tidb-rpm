@@ -4,7 +4,7 @@
 %define provider src/github.com/pingcap
 
 Name:           tidb
-Version:        3.0.1
+Version:        3.0.2
 Release:        1%{?dist}
 Summary:        TiDB is a distributed NewSQL database compatible with MySQL protocol
 
